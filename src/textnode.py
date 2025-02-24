@@ -22,7 +22,7 @@ class TextNode:
     
     def get_url(self):
         return self.url
-
+    
     def __eq__(self, text_node):
         return self.text == text_node.get_text() and self.text_type == text_node.get_text_type() and self.url == text_node.get_url()
     
