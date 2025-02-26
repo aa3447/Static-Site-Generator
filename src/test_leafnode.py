@@ -4,7 +4,7 @@ from leafnode import LeafNode
 from textnode import TextNode, TextType
 
 
-class TestTextNode(unittest.TestCase):
+class TestLeafNode(unittest.TestCase):
     def test_to_html(self):
         leaf_node = LeafNode("p", "Goodbye")
         self.assertEqual(leaf_node.to_html(), "<p>Goodbye</p>")
@@ -33,7 +33,7 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(leaf_node.to_html(), "Testing Normal!")
 
     def test_text_node_to_leaf_node_bold(self):
-        text_node =  TextNode("Testing Bold!", TextType.BOLD)
+        text_node = TextNode("Testing Bold!", TextType.BOLD)
         leaf_node = LeafNode.text_node_to_leaf_node(text_node)
         self.assertIsInstance(leaf_node, LeafNode)
         self.assertEqual(leaf_node.to_html(), "<b>Testing Bold!</b>")
