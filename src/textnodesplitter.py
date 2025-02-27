@@ -45,4 +45,56 @@ class TextNodeSplitter:
         return re.findall(r"!\[([^\[\]]*)\]\((.+?)\)", text)
     
     def extract_markdown_links(text):
-        return re.findall(r"\[([^\[\]]*)\]\((.+?)\)", text)
+        return re.findall(r"(?<!!)\[([^\[\]]*)\]\((.+?)\)", text)
+    
+    def split_nodes_image(old_nodes):
+        node_list = []
+        
+        for node in old_nodes:
+            node_text = node.get_text()
+            image_list = TextNodeSplitter.extract_markdown_images(node_text)
+            
+            if node.get_text_type() != TextType.NORMAL:
+                node_list.append(node)
+
+            elif len(image_list) != 0:
+                
+    
+                split_node_text = re.split(r"!\[([^\[\]]*)\]\(([^\(\)]+)\)", node_text, maxsplit=1)
+                
+                if split_node_text[0] != "":
+                    node_list.append(TextNode(split_node_text[0], TextType.NORMAL))
+                node_list.append(TextNode(split_node_text[1], TextType.IMAGE, split_node_text[2]))
+                if split_node_text[3] != "":
+                     node_list.extend(TextNodeSplitter.split_nodes_image([TextNode(split_node_text[3], TextType.NORMAL)]))         
+            
+            else:
+                node_list.append(TextNode(node_text, TextType.NORMAL))
+
+        return node_list
+    
+    def split_nodes_link(old_nodes):
+        node_list = []
+        
+        for node in old_nodes:
+            node_text = node.get_text()
+            image_list = TextNodeSplitter.extract_markdown_links(node_text)
+            
+            if node.get_text_type() != TextType.NORMAL:
+                node_list.append(node)
+
+            elif len(image_list) != 0:
+                
+    
+                split_node_text = re.split(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]+)\)", node_text, maxsplit=1)
+                
+                if split_node_text[0] != "":
+                    node_list.append(TextNode(split_node_text[0], TextType.NORMAL))
+                node_list.append(TextNode(split_node_text[1], TextType.LINK, split_node_text[2]))
+                if split_node_text[3] != "":
+                     node_list.extend(TextNodeSplitter.split_nodes_link([TextNode(split_node_text[3], TextType.NORMAL)]))         
+            
+            else:
+                node_list.append(TextNode(node_text, TextType.NORMAL))
+
+        return node_list

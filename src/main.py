@@ -3,8 +3,10 @@ from htmlnode import HTMLNode
 from leafnode import LeafNode
 from parentnode import ParentNode
 from textnodesplitter import TextNodeSplitter
+import re
 
 def main():
+    '''
     text_node = TextNode("Testing!", TextType.BOLD, "https://google.com")
     print(f"This is a Text Node: {text_node}")
     html_node = HTMLNode("a","asdas",None, {"href": "https://www.google.com","target": "_blank",})
@@ -23,6 +25,17 @@ def main():
     print(test_markdown_images)
     test_markdown_links = TextNodeSplitter.extract_markdown_links("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)")
     print(test_markdown_links)
+
+    split_images = TextNodeSplitter.split_nodes_image([TextNode("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)", TextType.NORMAL)])
+    print(split_images)
+
+    split_links = TextNodeSplitter.split_nodes_link([TextNode("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", TextType.NORMAL)])
+    print(split_links)
+
+    split = re.split(r"(?<!!)\[([^\[\]]*)\]\((.+?)\)", "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", maxsplit=1)
+    print(split)
+    '''
+    
 
 if __name__ == "__main__":
     main()
