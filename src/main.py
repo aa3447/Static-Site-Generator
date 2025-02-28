@@ -4,6 +4,7 @@ from leafnode import LeafNode
 from parentnode import ParentNode
 from textnodesplitter import TextNodeSplitter
 import re
+from blocknode import BlockNode
 
 def main():
     '''
@@ -34,8 +35,20 @@ def main():
 
     split = re.split(r"(?<!!)\[([^\[\]]*)\]\((.+?)\)", "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)", maxsplit=1)
     print(split)
-    '''
     
+    n = TextNodeSplitter.text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+    print(n)
+    '''
+    sample_markdown = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+    print(BlockNode.markdown_to_blocks(sample_markdown))
 
 if __name__ == "__main__":
     main()

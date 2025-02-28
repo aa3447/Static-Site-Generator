@@ -98,3 +98,16 @@ class TextNodeSplitter:
                 node_list.append(TextNode(node_text, TextType.NORMAL))
 
         return node_list
+
+    def text_to_textnodes(text):
+        delimiters = [("**", TextType.BOLD), ("*",TextType.ITALIC), ("`",TextType.CODE)]
+        text_nodes = [TextNode(text, TextType.NORMAL)]
+        
+        for delimiter , text_type in delimiters:
+            text_nodes = TextNodeSplitter.split_nodes_delimiter(text_nodes, delimiter, text_type)
+
+
+        text_nodes_images = TextNodeSplitter.split_nodes_image(text_nodes)
+        text_nodes_fin = TextNodeSplitter.split_nodes_link(text_nodes_images)
+        
+        return text_nodes_fin

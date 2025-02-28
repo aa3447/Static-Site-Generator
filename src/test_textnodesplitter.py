@@ -51,6 +51,16 @@ class TestTextNodeSplitter(unittest.TestCase):
         text_node_split_code = TextNodeSplitter.split_nodes_delimiter(text_node_split_bold, "```", TextType.CODE)
         self.assertEqual(text_node_split_code, [TextNode("This is a ", TextType.NORMAL), TextNode("test", TextType.CODE), TextNode(" for ", TextType.NORMAL), TextNode("code", TextType.BOLD), TextNode(" nodes", TextType.NORMAL),
                                                 TextNode("This is a ", TextType.NORMAL), TextNode("test", TextType.BOLD), TextNode(" for ", TextType.NORMAL), TextNode("bold", TextType.CODE), TextNode(" nodes", TextType.NORMAL)])
+    
+    def test_split_nodes_delimiter_empty_text(self):
+        empty_node = TextNode("", TextType.NORMAL)
+        text_node_split_bold = TextNodeSplitter.split_nodes_delimiter([empty_node], "**", TextType.BOLD)
+        self.assertEqual(text_node_split_bold, [TextNode("", TextType.NORMAL)])
+    
+    def test_split_nodes_delimiter_missing_close_delimiter(self):
+        missing_close_node = TextNode("This is a **test for split nodes", TextType.NORMAL)
+        with self.assertRaises(SyntaxError):
+            TextNodeSplitter.split_nodes_delimiter([missing_close_node], "**", TextType.BOLD)
         
     # Test cases for extract_markdown_images
     def test_extract_markdown_images(self):
@@ -164,3 +174,18 @@ class TestTextNodeSplitter(unittest.TestCase):
     def test_split_node_links_with_space(self):
         test_markdown_links = TextNodeSplitter.split_nodes_link([TextNode("This is text with a [link] (https://www.boot.dev)",TextType.NORMAL)])
         self.assertEqual(test_markdown_links, [TextNode("This is text with a [link] (https://www.boot.dev)", TextType.NORMAL)])
+
+    # Test cases for text_to_textnodes
+    def test_text_to_textnodes(self):
+        test_results = TextNodeSplitter.text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+        self.assertEqual(test_results, [TextNode("This is ", TextType.NORMAL), TextNode("text", TextType.BOLD), TextNode(" with an ", TextType.NORMAL), TextNode("italic", TextType.ITALIC), TextNode(" word and a ", TextType.NORMAL),
+                                TextNode("code block", TextType.CODE), TextNode(" and an ", TextType.NORMAL), TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), TextNode(" and a ", TextType.NORMAL),
+                                TextNode("link", TextType.LINK, "https://boot.dev")])
+        
+    def test_text_to_textnodes_no_text(self):
+        test_results = TextNodeSplitter.text_to_textnodes("")
+        self.assertEqual(test_results, [TextNode("", TextType.NORMAL)])
+    
+    def test_text_to_textnodes_missing_close_delimiter(self):
+        with self.assertRaises(SyntaxError):
+            TextNodeSplitter.text_to_textnodes("This is **text with an *italic* word and a `code block`")
