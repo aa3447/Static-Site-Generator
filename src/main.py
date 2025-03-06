@@ -5,16 +5,20 @@ from parentnode import ParentNode
 from textnodesplitter import TextNodeSplitter
 from htmlmaker import HTMLMaker
 from blocknode import BlockNode
+from copystatictopublic import CopyStaticToPublic
 
 def main():
-    sample_markdown = """
-```
-1. ![alt text for image](url/of/image.jpg)
-2. ![alt text for image](url/of/image.jpg)
-```
-"""
-    html = HTMLMaker.markdown_to_html_node(sample_markdown)
-    print(html.to_html())
+    public_path = "./public"
+    static_path = "./static"
+
+    #html = HTMLMaker.markdown_to_html_node(sample_markdown)
+    #print(html.to_html())
+
+    copier = CopyStaticToPublic(public_path, static_path)
+    copier.copy_static_to_public(public_path, static_path)
+
+
+
 
 if __name__ == "__main__":
     main()
