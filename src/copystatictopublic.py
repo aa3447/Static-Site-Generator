@@ -6,14 +6,14 @@ class CopyStaticToPublic:
         self.__public_path = public_path
         self.__static_path = static_path
 
-    def copy_static_to_public(self, public_path , static_path):
-        if os.path.exists(public_path):
-            shutil.rmtree(public_path)
-            os.mkdir(public_path)
+    def copy_static_to_public(self):
+        if os.path.exists(self.__public_path):
+            shutil.rmtree(self.__public_path)
+            os.mkdir(self.__public_path)
         else:
-            os.mkdir(public_path)
+            os.mkdir(self.__public_path)
 
-        self.__copy_static(static_path, public_path)
+        self.__copy_static(self.__static_path, self.__public_path)
 
 
     def __copy_static(self,static_path , public_path):

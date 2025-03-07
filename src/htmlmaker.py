@@ -3,6 +3,7 @@ from parentnode import ParentNode
 from leafnode import LeafNode
 from textnodesplitter import TextNodeSplitter
 import re
+import os
 
 class HTMLMaker:
     def __init__(self):
@@ -66,6 +67,38 @@ class HTMLMaker:
             leaf_nodes.append(LeafNode.text_node_to_leaf_node(value))
         return leaf_nodes
     
+    def extract_title(markdown):
+        if markdown.startswith("# "):
+            match = re.match(r"# [\w\t ]+\n", markdown)
+            if match:
+                return match.group().lstrip("#").strip()
+            return markdown.lstrip("#").strip()
+        
+        raise SyntaxError("Missing heading")
+    
+    def generate_page(from_path, template_path, dest_path):
+        markdown_as_string = ""
+        template_as_string = ""
+        print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+
+        dest_path_dicts = os.path.dirname(dest_path)
+        if not os.path.exists(dest_path_dicts):
+            os.makedirs(dest_path_dicts)
+
+        with open(from_path) as markdown:
+            markdown_as_string = markdown.read()
+        
+        with open(template_path) as template:
+            template_as_string = template.read()
+        
+        html = HTMLMaker.markdown_to_html_node(markdown_as_string).to_html()
+        title = HTMLMaker.extract_title(markdown_as_string)
+        complete_template = template_as_string.replace("{{ Title }}", title).replace("{{ Content }}", html)      
+ 
+       
+        with open(dest_path, "w") as fin_html:
+                fin_html.write(complete_template)
+
 
     def block_type_to_tag(block_type, block):
         match block_type:
@@ -83,4 +116,5 @@ class HTMLMaker:
                 return "ol"
             case _:
                 raise SyntaxError("Invalid Block Type")
+            
             

@@ -342,3 +342,40 @@ the **same** even with ``` inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain the **same** even with ``` inline stuff</code></pre></div>",
         )
+    
+    def test_extract_title(self):
+        sample_markdown = "# Tolkien Fan Club\n"
+        header = HTMLMaker.extract_title(sample_markdown)
+        self.assertEqual(
+            header,
+            "Tolkien Fan Club",
+        )
+    
+    def test_extract_title_no_newline(self):
+        sample_markdown = "# Tolkien Fan Club"
+        header = HTMLMaker.extract_title(sample_markdown)
+        self.assertEqual(
+            header,
+            "Tolkien Fan Club",
+        )
+    
+    def test_extract_title_tab(self):
+        sample_markdown = "# Tolkien Fan     Club"
+        header = HTMLMaker.extract_title(sample_markdown)
+        self.assertEqual(
+            header,
+            "Tolkien Fan     Club",
+        )
+    
+    def test_extract_end_space(self):
+        sample_markdown = "# Tolkien Fan Club "
+        header = HTMLMaker.extract_title(sample_markdown)
+        self.assertEqual(
+            header,
+            "Tolkien Fan Club",
+        )
+    
+    def test_extract_missing_hashtag(self):
+        sample_markdown = "Tolkien Fan Club"
+        with self.assertRaises(SyntaxError):
+            HTMLMaker.extract_title(sample_markdown)
