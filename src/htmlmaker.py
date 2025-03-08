@@ -99,7 +99,38 @@ class HTMLMaker:
         with open(dest_path, "w") as fin_html:
                 fin_html.write(complete_template)
 
+    def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+        markdown_as_string = ""
+        template_as_string = ""
+        print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
 
+        current_paths = os.scandir(dir_path_content)
+
+        for p in current_paths:
+            p_path = p.path
+            if os.path.isfile(p_path) and os.path.splitext(p_path)[1] == ".md":
+                dest_path_dicts = os.path.dirname(p_path).replace("./content", dest_dir_path)
+                
+                if not os.path.exists(dest_path_dicts):
+                    os.makedirs(dest_path_dicts)
+                
+                with open(p_path) as markdown:
+                    markdown_as_string = markdown.read()
+                
+                with open(template_path) as template:
+                    template_as_string = template.read()
+
+                html = HTMLMaker.markdown_to_html_node(markdown_as_string).to_html()
+                title = HTMLMaker.extract_title(markdown_as_string)
+                complete_template = template_as_string.replace("{{ Title }}", title).replace("{{ Content }}", html)
+               
+                public_path = p.path.replace("./content", dest_dir_path).replace(".md",".html")
+                with open(public_path, "w") as fin_html:
+                    fin_html.write(complete_template)  
+            else:
+                HTMLMaker.generate_pages_recursive(p_path, template_path, dest_dir_path)
+        
+           
     def block_type_to_tag(block_type, block):
         match block_type:
             case BlockType.PARAGRAPH:

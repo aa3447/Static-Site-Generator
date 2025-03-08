@@ -171,5 +171,5 @@ cython_debug/
 .pypirc
 
 src/.vscode
-src/content
+content
 public
