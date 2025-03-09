@@ -76,7 +76,7 @@ class HTMLMaker:
         
         raise SyntaxError("Missing heading")
     
-    def generate_page(from_path, template_path, dest_path):
+    def generate_page(from_path, template_path, dest_path, basepath = "/"):
         markdown_as_string = ""
         template_as_string = ""
         print(f"Generating page from {from_path} to {dest_path} using {template_path}")
@@ -93,13 +93,14 @@ class HTMLMaker:
         
         html = HTMLMaker.markdown_to_html_node(markdown_as_string).to_html()
         title = HTMLMaker.extract_title(markdown_as_string)
-        complete_template = template_as_string.replace("{{ Title }}", title).replace("{{ Content }}", html)      
+        complete_template = template_as_string.replace("{{ Title }}", title).replace("{{ Content }}", html)
+        complete_template_with_basepath = complete_template.replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}') 
  
        
         with open(dest_path, "w") as fin_html:
-                fin_html.write(complete_template)
+                fin_html.write(complete_template_with_basepath)
 
-    def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath = "/"):
         markdown_as_string = ""
         template_as_string = ""
         print(f"Generating pages from {dir_path_content} to {dest_dir_path} using {template_path}")
@@ -123,12 +124,13 @@ class HTMLMaker:
                 html = HTMLMaker.markdown_to_html_node(markdown_as_string).to_html()
                 title = HTMLMaker.extract_title(markdown_as_string)
                 complete_template = template_as_string.replace("{{ Title }}", title).replace("{{ Content }}", html)
+                complete_template_with_basepath = complete_template.replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}') 
                
                 public_path = p.path.replace("./content", dest_dir_path).replace(".md",".html")
                 with open(public_path, "w") as fin_html:
-                    fin_html.write(complete_template)  
+                    fin_html.write(complete_template_with_basepath)  
             else:
-                HTMLMaker.generate_pages_recursive(p_path, template_path, dest_dir_path)
+                HTMLMaker.generate_pages_recursive(p_path, template_path, dest_dir_path, basepath)
         
            
     def block_type_to_tag(block_type, block):
